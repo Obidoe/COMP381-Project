@@ -21,6 +21,7 @@ cc_data = pd.read_csv('cc-data.csv')
 # we will use balance, purchases, oneoff_purchases, installments_purchases, credit_limit, and payments
 useable_data = cc_data[['CREDIT_LIMIT', 'BALANCE', 'PURCHASES', 'ONEOFF_PURCHASES', 'INSTALLMENTS_PURCHASES',
                         'PAYMENTS']]
+useable_data = useable_data.dropna()
 #print(useable_data)
 
 # 500 row sample of data
@@ -43,7 +44,7 @@ def hierarchical(method, cut_height):
     plt.axhline(y=cut_height, color='r', linestyle='--', label=f'Cut Height = {cut_height}')
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f'output/{method}_dendrogram.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'output/{method}_{cut_height}_dendrogram.png', dpi=300, bbox_inches='tight')
     plt.close()
 
     clusters = fcluster(z_link, t=cut_height, criterion='distance')
@@ -53,12 +54,12 @@ def hierarchical(method, cut_height):
 
     plt.figure(figsize=(12, 6))
     cluster_summary.T.plot(kind='bar', figsize=(12, 6))
-    plt.title(f'{method.title()}-Link Cluster Feature Comparison')
+    plt.title(f'{method.title()}-Link Cluster Feature Comparison: Cut Height: {cut_height}')
     plt.ylabel('Average Value')
     plt.xlabel('Features')
     plt.xticks(rotation=360, fontsize=8)
     plt.tight_layout()
-    plt.savefig(f'output/{method}_cluster_bar.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'output/{method}_{cut_height}_cluster_bar.png', dpi=300, bbox_inches='tight')
     plt.close()
 
     end = time.time()
@@ -70,9 +71,17 @@ def hierarchical(method, cut_height):
 
 
 # RUN
-hierarchical('single', 4)
-hierarchical('complete', 10)
 
-# COMPARE
+# Kmeans test on 5 clusters
+# Kmeans test on 6 clusters
+
+# Kmedoids test on 5 clusters
+# Kmedoids test on 6 clusters
+
+hierarchical('single', 4)  # produces 6 clusters
+hierarchical('complete', 4)  # produces 16 clusters
+
+hierarchical('single', 10)  # produces 2 clusters
+hierarchical('complete', 10)  # produces 5 clusters
 
 
